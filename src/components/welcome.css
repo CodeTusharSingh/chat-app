@@ -1,0 +1,327 @@
+#main-page-navbar {
+    background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    height: 80px;
+}
+
+#main-page-logo-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#main-page-logo-button img {
+    height: 105px;
+}
+
+/* #main-page-logo-button img:hover {
+    transform: scale(1.2);
+} */
+
+#main-page-profile {
+    margin-right: 50px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#main-page-profile:hover {
+    transform: scale(1.2);
+}
+
+#main-page-profile-menu {
+    background-color: rgb(50, 50, 50);
+    height: 100px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-radius: 5px;
+    position: absolute;
+}
+
+#user-profile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+#user-sign-out {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+#user-profile:hover {
+    background-color: rgb(100, 100, 100);
+}
+
+#user-profile:active {
+    background-color: rgb(150, 150, 150);
+}
+
+#user-sign-out:hover {
+    background-color: rgb(100, 100, 100);
+}
+
+#user-sign-out:active {
+    background-color: rgb(150, 150, 150);
+}
+
+#create-chat-room-modal {
+    background-color: rgb(50, 50, 50);
+    border-radius: 5px;
+}
+
+#create-chat-room-modal-heading-close {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#create-chat-room-modal-search-user-list {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#create-chat-room-modal-user-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#create-chat-room-modal-searched-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#create-chat-room-modal-create-room {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+
+#create-chat-group-modal {
+    background-color: rgb(50, 50, 50);
+    border-radius: 5px;
+}
+
+#create-chat-group-modal-heading-close {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#create-chat-group-modal-search-user-list {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#create-chat-group-modal-user-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#create-chat-group-modal-searched-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#create-chat-group-modal-create-group {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#chat-room-group-message {
+    display: flex;
+    flex-direction: row;
+}
+
+#choose-chat-group-room {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    cursor: pointer;
+}
+
+#choose-chat-room {
+    border-right: 1px solid #00ff44;
+    border-bottom: 2px solid #00ff44;
+    width: 50%;
+    cursor: pointer;
+    font-family: 'roboto';
+    height: 25px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-weight: 700;
+    color: #00ff44;
+}
+
+
+#choose-chat-group {
+    border-left: 1px solid white;
+    border-bottom: 2px solid white;
+    width: 50%;
+    cursor: pointer;
+    font-family: 'roboto';
+    height: 25px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+
+#chat-room {
+    background-color: black;
+    height: 84vh;
+    width: 35%;
+    border-right: white 1px solid;
+}
+
+#chat-room-msg {
+    background-color: rgb(50, 50, 50);
+    height: 84vh;
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-room-msg-header {
+    background: linear-gradient(90deg, rgba(21, 108, 219, 1) 0%, rgba(0, 0, 0, 0.9416141456582633) 61%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+#chat-room-msg-area {
+    display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 67vh;
+    flex-direction: column-reverse;
+}
+
+#chat-room-msg-area-sender {
+    background-color: #1569D5;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: fit-content;
+    border-radius: 20px;
+    max-width: 300px;
+}
+
+#chat-room-msg-area-receiver {
+    background-color: #00ff44;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: fit-content;
+    border-radius: 20px;
+    max-width: 300px;
+}
+
+#chat-room-msg-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+#chat-group {
+    background-color: black;
+    height: 84vh;
+    width: 35%;
+    border-right: white 1px solid;
+}
+
+#chat-group-msg {
+    background-color: rgb(50, 50, 50);
+    height: 84vh;
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-group-msg-header {
+    background: linear-gradient(90deg, rgba(219, 21, 125, 1) 0%, rgba(0, 0, 0, 1) 61%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+#chat-group-msg-area {
+    display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 67vh;
+    flex-direction: column-reverse;
+}
+
+#chat-group-msg-area-sender {
+    background-color: #1569D5;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: fit-content;
+    border-radius: 20px;
+    max-width: 300px;
+}
+
+#chat-group-msg-area-receiver {
+    background-color: #00ff44;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: fit-content;
+    border-radius: 20px;
+    max-width: 300px;
+}
+
+#chat-group-msg-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}

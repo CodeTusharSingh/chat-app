@@ -1,0 +1,10 @@
+:root {
+  color-scheme: light dark;
+  background-color: black;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
