@@ -138,7 +138,7 @@ function Home() {
     return (
         <>
             <div id='home-container-div'>
-                <img src='../chat-app-img.png' title='Chat App' alt='Chat App'></img>
+                <img src='https://github.com/CodeTusharSingh/chat-app/raw/fce1dca8e40ee408fdf2c3f1e27071c2d7521ece/chat-app-img.png' title='Chat App' alt='Chat App'></img>
                 <div id='home-sign-up-container'>
                     {signIn && <h1 style={{ fontFamily: 'roboto', color: 'black' }}>Sign In</h1>}
                     {!signIn && <h1 style={{ fontFamily: 'roboto', color: 'black' }}>Sign Up</h1>}
