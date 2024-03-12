@@ -463,7 +463,7 @@ function Welcome() {
                 <>
                     <div id='main-page-navbar'>
                         <div id='main-page-logo-button'>
-                            <img src="../chat-app-img.png" title="Chat App" alt="Chat App"></img>
+                            <img src="https://github.com/CodeTusharSingh/chat-app/raw/fce1dca8e40ee408fdf2c3f1e27071c2d7521ece/chat-app-img.png" title="Chat App" alt="Chat App"></img>
                             <ButtonGroup variant="contained" color="secondary" aria-label="Basic button group">
                                 <Button onClick={() => {
                                     setShowCreateChatRoom(true)
