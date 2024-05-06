@@ -9,7 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import SignOut from "./signOut";
 import './welcome.css'
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 
@@ -454,6 +454,54 @@ function Welcome() {
     const chooseChatRoomRef = useRef(null);
     const chooseChatGroupRef = useRef(null);
 
+    const [width, setWidth] = useState(window.innerWidth);
+
+    const chatRoomVisibilityRef = useRef(null);
+    const chatRoomMsgVisibilityRef = useRef(null);
+
+    const chatGroupVisibilityRef = useRef(null);
+    const chatGroupMsgVisibilityRef = useRef(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        };
+
+        console.log(width);
+        if (chooseChatRoom) {
+            if (width > 775) {
+                chatRoomVisibilityRef.current.style.display = 'block';
+                chatRoomMsgVisibilityRef.current.style.display = 'block';
+                chatRoomVisibilityRef.current.style.width = '35%';
+                chatRoomMsgVisibilityRef.current.style.width = '65%';
+            } else {
+                if (chatRoomMsgVisibilityRef.current.style.width === '65%') {
+                    chatRoomMsgVisibilityRef.current.style.display = 'none';
+                    chatRoomVisibilityRef.current.style.width = '100%';
+                }
+            }
+        } else {
+            if (width > 775) {
+                chatGroupVisibilityRef.current.style.display = 'block';
+                chatGroupMsgVisibilityRef.current.style.display = 'block';
+                chatGroupVisibilityRef.current.style.width = '35%';
+                chatGroupMsgVisibilityRef.current.style.width = '65%';
+            } else {
+                if (chatGroupMsgVisibilityRef.current.style.width === '65%') {
+                    chatGroupMsgVisibilityRef.current.style.display = 'none';
+                    chatGroupVisibilityRef.current.style.width = '100%';
+                }
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [width, chooseChatRoom]);
+
+
     return (
         <>
             {!userPhotoURL &&
@@ -463,8 +511,8 @@ function Welcome() {
                 <>
                     <div id='main-page-navbar'>
                         <div id='main-page-logo-button'>
-                            <img src="https://github.com/CodeTusharSingh/chat-app/raw/fce1dca8e40ee408fdf2c3f1e27071c2d7521ece/chat-app-img.png" title="Chat App" alt="Chat App"></img>
-                            <ButtonGroup variant="contained" color="secondary" aria-label="Basic button group">
+                            <img id='main-page-logo' src="https://github.com/CodeTusharSingh/chat-app/raw/fce1dca8e40ee408fdf2c3f1e27071c2d7521ece/chat-app-img.png" title="Chat App" alt="Chat App"></img>
+                            <ButtonGroup id='create-room-group-button' variant="contained" color="secondary" aria-label="Basic button group">
                                 <Button onClick={() => {
                                     setShowCreateChatRoom(true)
                                     setShowCreateChatGroup(false)
@@ -488,6 +536,20 @@ function Welcome() {
                                 </div>
                             }
 
+                        </div>
+                    </div>
+                    <div id='mobile-create-room-group-button'>
+                        <div>
+                            <button onClick={() => {
+                                setShowCreateChatRoom(true)
+                                setShowCreateChatGroup(false)
+                            }}>Create Chat Room</button>
+                        </div>
+                        <div>
+                            <button onClick={() => {
+                                setShowCreateChatGroup(true)
+                                setShowCreateChatRoom(false)
+                            }}>Create Chat Group</button>
                         </div>
                     </div>
                 </>
@@ -831,6 +893,8 @@ function Welcome() {
                         chooseChatGroupRef.current.style.borderLeft = '1px solid white'
                         chooseChatGroupRef.current.style.color = 'white'
                         chooseChatGroupRef.current.style.fontWeight = '500'
+                        setCurrentRoom('');
+                        setCurrentGroup('');
                     }}
 
                     onMouseEnter={() => {
@@ -854,6 +918,8 @@ function Welcome() {
                         chooseChatRoomRef.current.style.borderRight = '1px solid white'
                         chooseChatRoomRef.current.style.color = 'white'
                         chooseChatRoomRef.current.style.fontWeight = '500'
+                        setCurrentRoom('');
+                        setCurrentGroup('');
                     }}
                     onMouseEnter={() => {
                         chooseChatGroupRef.current.style.backgroundColor = 'rgb(150,150,150)'
@@ -870,25 +936,70 @@ function Welcome() {
                     <div id='chat-room-group-message' >
                         {chooseChatRoom &&
                             <>
-                                <div id='chat-room'>
+                                <div id='chat-room' ref={chatRoomVisibilityRef}>
                                     {
                                         chatRoomListState.map((item, index) => {
                                             if (userEmailId == item.member1 || userEmailId == item.member2) {
                                                 if (userPhotoURL === item.photo1) {
                                                     return (
-                                                        <div key={index} ref={el => roomRef.current[`${item.roomName}`] = el} onClick={() => {
-                                                            setCurrentRoom(item.roomName)
-                                                            setCurrentRoomPhoto(item.photo2)
-                                                        }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
+                                                        <div key={index}
+                                                            ref={el => roomRef.current[`${item.roomName}`] = el}
+                                                            onClick={() => {
+                                                                if (currentRoom.length !== 0 && currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${currentRoom}`].style.backgroundColor = 'black';
+                                                                }
+                                                                setCurrentRoom(item.roomName)
+                                                                setCurrentRoomPhoto(item.photo2)
+                                                                roomRef.current[`${item.roomName}`].style.backgroundColor = 'rgb(120,120,120)';
+                                                                if (width <= 775) {
+                                                                    chatRoomVisibilityRef.current.style.display = 'none';
+                                                                    chatRoomMsgVisibilityRef.current.style.display = 'block';
+                                                                    chatRoomMsgVisibilityRef.current.style.width = '100%';
+                                                                }
+                                                            }}
+                                                            onMouseEnter={() => {
+                                                                if (currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${item.roomName}`].style.backgroundColor = 'rgb(100,100,100)';
+                                                                }
+                                                            }}
+                                                            onMouseLeave={() => {
+                                                                if (currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${item.roomName}`].style.backgroundColor = `black`;
+                                                                }
+                                                            }}
+                                                            style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
                                                             <img src={item.photo2} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.roomName}</p>
-                                                        </div>)
+                                                        </div>
+                                                    )
                                                 } else {
                                                     return (
-                                                        <div key={index} ref={el => roomRef.current[`${item.roomName}`] = el} onClick={() => {
-                                                            setCurrentRoom(item.roomName)
-                                                            setCurrentRoomPhoto(item.photo1)
-                                                        }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
+                                                        <div key={index}
+                                                            ref={el => roomRef.current[`${item.roomName}`] = el}
+                                                            onClick={() => {
+                                                                if (currentRoom.length !== 0 && currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${currentRoom}`].style.backgroundColor = 'black';
+                                                                }
+                                                                setCurrentRoom(item.roomName)
+                                                                setCurrentRoomPhoto(item.photo1)
+                                                                roomRef.current[`${item.roomName}`].style.backgroundColor = 'rgb(120,120,120)';
+                                                                if (width <= 775) {
+                                                                    chatRoomVisibilityRef.current.style.display = 'none';
+                                                                    chatRoomMsgVisibilityRef.current.style.display = 'block';
+                                                                    chatRoomMsgVisibilityRef.current.style.width = '100%';
+                                                                }
+                                                            }}
+                                                            onMouseEnter={() => {
+                                                                if (currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${item.roomName}`].style.backgroundColor = 'rgb(100,100,100)';
+                                                                }
+                                                            }}
+                                                            onMouseLeave={() => {
+                                                                if (currentRoom !== item.roomName) {
+                                                                    roomRef.current[`${item.roomName}`].style.backgroundColor = `black`;
+                                                                }
+                                                            }}
+                                                            style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
                                                             <img src={item.photo1} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.roomName}</p>
                                                         </div>)
@@ -897,11 +1008,25 @@ function Welcome() {
                                         })
                                     }
                                 </div>
-                                <div id='chat-room-msg'>
+                                <div id='chat-room-msg' ref={chatRoomMsgVisibilityRef}>
                                     {currentRoom !== '' &&
                                         <>
                                             <div id='chat-room-msg-header'>
-                                                <img src={currentRoomPhoto} alt="Room Photo" style={{ borderRadius: '50%', height: '50px', width: '50px' }}></img>
+                                                <div>
+                                                    <ArrowBackIcon onClick={() => {
+                                                        if (width <= 775) {
+                                                            chatRoomMsgVisibilityRef.current.style.display = 'none';
+                                                            chatRoomVisibilityRef.current.style.display = 'block';
+                                                            chatRoomVisibilityRef.current.style.width = '100%';
+                                                            roomRef.current[`${currentRoom}`].style.backgroundColor = 'black';
+                                                            setCurrentRoom('');
+                                                        } else {
+                                                            roomRef.current[`${currentRoom}`].style.backgroundColor = 'black';
+                                                            setCurrentRoom('');
+                                                        }
+                                                    }}></ArrowBackIcon>
+                                                    <img src={currentRoomPhoto} alt="Room Photo" style={{ borderRadius: '50%', height: '50px', width: '50px' }}></img>
+                                                </div>
                                                 <p style={{ fontFamily: 'roboto', fontSize: '18px' }}> {currentRoom}</p>
                                             </div>
                                             <br></br>
@@ -912,26 +1037,26 @@ function Welcome() {
                                                             if (msg.sender === userEmailId) {
                                                                 return (
                                                                     <div key={index}>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px' }}>You</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>You</p>
                                                                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                                             <div id="chat-room-msg-area-sender" ref={messageAreaRef} >
                                                                                 <p style={{ fontFamily: 'roboto', wordWrap: 'break-word' }}>{msg.message}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px' }}>{msg.sentTime}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.sentTime}</p>
                                                                         <br></br>
                                                                     </div>
                                                                 )
                                                             } else if (msg.sender !== userEmailId) {
                                                                 return (
                                                                     <div key={index}>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px' }}>{msg.senderName}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.senderName}</p>
                                                                         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                                                                             <div id="chat-room-msg-area-receiver" ref={messageAreaRef}>
                                                                                 <p style={{ fontFamily: 'roboto', wordWrap: 'break-word' }}>{msg.message}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px' }}>{msg.sentTime}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.sentTime}</p>
                                                                         <br></br>
                                                                     </div>
                                                                 )
@@ -970,15 +1095,37 @@ function Welcome() {
                         }
                         {!chooseChatRoom &&
                             <>
-                                <div id='chat-group'>
+                                <div id='chat-group' ref={chatGroupVisibilityRef}>
                                     {
                                         groupList.map((item, index) => {
                                             if (item !== null) {
                                                 if (item.members.indexOf(`${userEmailId}`) !== -1) {
                                                     return (
-                                                        <div key={index} ref={el => groupRef.current[`${item.groupName}`] = el} onClick={() => {
-                                                            setCurrentGroup(item.groupName)
-                                                        }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
+                                                        <div key={index}
+                                                            ref={el => groupRef.current[`${item.groupName}`] = el}
+                                                            onClick={() => {
+                                                                if (currentGroup.length !== 0 && currentGroup !== item.groupName) {
+                                                                    groupRef.current[`${currentGroup}`].style.backgroundColor = 'black';
+                                                                }
+                                                                setCurrentGroup(item.groupName)
+                                                                groupRef.current[`${item.groupName}`].style.backgroundColor = 'rgb(120,120,120)';
+                                                                if (width <= 775) {
+                                                                    chatGroupVisibilityRef.current.style.display = 'none';
+                                                                    chatGroupMsgVisibilityRef.current.style.display = 'block';
+                                                                    chatGroupMsgVisibilityRef.current.style.width = '100%';
+                                                                }
+                                                            }}
+                                                            onMouseEnter={() => {
+                                                                if (currentGroup !== item.groupName) {
+                                                                    groupRef.current[`${item.groupName}`].style.backgroundColor = 'rgb(100,100,100)';
+                                                                }
+                                                            }}
+                                                            onMouseLeave={() => {
+                                                                if (currentGroup !== item.groupName) {
+                                                                    groupRef.current[`${item.groupName}`].style.backgroundColor = `black`;
+                                                                }
+                                                            }}
+                                                            style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
                                                             <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.groupName}</p>
                                                         </div>
@@ -988,11 +1135,25 @@ function Welcome() {
                                         })
                                     }
                                 </div>
-                                <div id='chat-group-msg'>
+                                <div id='chat-group-msg' ref={chatGroupMsgVisibilityRef}>
                                     {currentGroup !== '' &&
                                         <>
                                             <div id='chat-group-msg-header'>
-                                                <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '60px', width: '60px' }}></img>
+                                                <div>
+                                                    <ArrowBackIcon onClick={() => {
+                                                        if (width <= 775) {
+                                                            chatGroupMsgVisibilityRef.current.style.display = 'none';
+                                                            chatGroupVisibilityRef.current.style.display = 'block';
+                                                            chatGroupVisibilityRef.current.style.width = '100%';
+                                                            groupRef.current[`${currentGroup}`].style.backgroundColor = 'black';
+                                                            setCurrentGroup('');
+                                                        } else {
+                                                            groupRef.current[`${currentGroup}`].style.backgroundColor = 'black';
+                                                            setCurrentGroup('');
+                                                        }
+                                                    }}></ArrowBackIcon>
+                                                    <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '60px', width: '60px' }}></img>
+                                                </div>
                                                 <p style={{ fontFamily: 'roboto', fontSize: '18px' }}> {currentGroup}</p>
                                             </div>
                                             <br></br>
@@ -1003,13 +1164,13 @@ function Welcome() {
                                                             if (msg.sender === userEmailId) {
                                                                 return (
                                                                     <div key={index}>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px' }}>You</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>You</p>
                                                                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                                             <div id="chat-group-msg-area-sender" ref={messageAreaRef} >
                                                                                 <p style={{ fontFamily: 'roboto', wordWrap: 'break-word' }}>{msg.message}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px' }}>{msg.sentTime}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.sentTime}</p>
 
                                                                         <br></br>
                                                                     </div>
@@ -1017,13 +1178,13 @@ function Welcome() {
                                                             } else if (msg.sender !== userEmailId) {
                                                                 return (
                                                                     <div key={index}>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px' }}>{msg.senderName}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.senderName}</p>
                                                                         <div key={index} style={{ display: 'flex', justifyContent: 'flex-start' }}>
                                                                             <div id="chat-group-msg-area-receiver" ref={messageAreaRef}>
                                                                                 <p style={{ fontFamily: 'roboto', wordWrap: 'break-word' }}>{msg.message}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px' }}>{msg.sentTime}</p>
+                                                                        <p style={{ display: 'flex', justifyContent: 'flex-start', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>{msg.sentTime}</p>
                                                                         <br></br>
                                                                     </div>
                                                                 )
@@ -1070,228 +1231,3 @@ function Welcome() {
 }
 
 export default Welcome;
-
-
-
-{/* <h1 style={{ fontFamily: 'roboto' }}>Welcome</h1>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={userPhotoURL} alt={userName} title={userName} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                <p style={{ fontFamily: 'roboto' }}> {userEmailId}</p>
-            </div>
-            <h1 style={{ fontFamily: 'roboto' }}>User List</h1>
-            {
-                userList.current.map((user, index) => {
-                    if (user.email !== userEmailId) {
-                        return (
-                            <div key={index} onClick={() => {
-                                setParticipantPhotURL(user.photoURL);
-                                setParticipantName(user.name)
-                                setParticipantEmailId(user.email)
-                                setGroupAdd(user.email);
-                                setGroupRemove('')
-                                {
-                                    if (groupMemberRef.current.indexOf(userEmailId) === -1) {
-                                        groupMemberRef.current.push(userEmailId)
-                                    }
-                                    if (groupMemberRef.current.indexOf(user.email) === -1) {
-                                        groupMemberRef.current.push(user.email)
-                                    }
-                                }
-                            }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', width: 'max-content' }}>
-                                <img src={user.photoURL} alt={user.name} title={user.name} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                                <p style={{ fontFamily: 'roboto' }}> {user.email}</p>
-                            </div>
-                        )
-                    }
-                })
-            } */}
-
-
-{/* {
-            <h1 style={{ fontFamily: 'roboto' }}>Create Chat Room</h1>
-            <h3 style={{ fontFamily: 'roboto' }}>You: </h3>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={userPhotoURL} alt={userName} title={userName} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                <p style={{ fontFamily: 'roboto' }}> {userEmailId}</p>
-            </div>
-            <h3 style={{ fontFamily: 'roboto' }}>Choose a participant: </h3>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={participantPhotoURL} alt={participantName} title={participantName} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                <p style={{ fontFamily: 'roboto' }}> {participantEmailId}</p>
-            </div>
-            <br></br>
-            <br></br>
-            <TextField focused variant="outlined" label='Chat Room Name' placeholder="Enter Chat Room Name" type="text" value={chatRoomName} onChange={(event) => {
-                const roomName = event.target.value;
-                setChatRoomName(roomName)
-            }}
-                InputProps={{
-                    style: { color: 'white' }
-                }}
-                InputLabelProps={{
-                    style: { color: 'white' }
-                }}
-            ></TextField>
-            <br></br>
-            <br></br>
-            <Button variant="contained" onClick={createChatRoom}>Create Room</Button>
-
-            } */}
-
-{/* <h1 style={{ fontFamily: 'roboto' }}>Create Chat Group</h1>
-            <h3 style={{ fontFamily: 'roboto' }}>You: </h3>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={userPhotoURL} alt={userName} title={userName} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                <p style={{ fontFamily: 'roboto' }}> {userEmailId}</p>
-            </div>
-            <h3 style={{ fontFamily: 'roboto' }}>Add Members: </h3>
-
-            {
-                groupMember.map((user, index) => {
-                    if (user != null && user.email != userEmailId) {
-
-                        return (
-                            <div onClick={() => {
-                                groupMemberRef.current = groupMemberRef.current.filter(member => member !== user.email)
-                                setGroupRemove(user.email)
-                                setGroupAdd('')
-                            }
-                            } key={index} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', width: 'max-content' }}>
-                                <img src={user.photoURL} alt={user.name} title={user.name} style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
-                                <p style={{ fontFamily: 'roboto' }}> {user.email}</p>
-                            </div >
-                        )
-                    }
-                })
-            }
-            <br></br>
-            <TextField type="text" variant="outlined" focused
-                InputProps={{
-                    style: { color: 'white' }
-                }}
-                InputLabelProps={{
-                    style: { color: 'white' }
-                }}
-                label="Group Name"
-                placeholder="Enter Group Name"
-                value={groupName}
-                onChange={(event) => {
-                    setGroupName(event.target.value)
-                }}
-            ></TextField>
-            <br></br>
-            <br></br>
-            <Button variant="contained" onClick={createGroup} >Create Group</Button> */}
-
-
-
-{/* {
-                <h1 style={{ fontFamily: 'roboto' }}>Chat Rooms</h1>
-                {
-                chatRoomListState.map((item, index) => {
-                    if (userEmailId == item.member1 || userEmailId == item.member2) {
-                        return (
-                            <div key={index} ref={el => roomRef.current[`${item.roomName}`] = el} onClick={() => {
-                                setCurrentRoom(item.roomName)
-                            }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', width: 'max-content' }}>
-
-                                <p style={{ fontFamily: 'roboto' }}> {item.roomName}</p>
-                            </div>)
-                        }
-                    })
-                }
-            } */}
-
-
-{/* <h1 style={{ fontFamily: 'roboto' }}> You are currently in : {currentRoom}</h1>
-
-            {
-                recieveMessage.map((msg, index) => {
-                    if (msg.sender === userEmailId) {
-                        return (
-                            <div key={index}>
-                                <p style={{ fontFamily: 'roboto' }}>You: {msg.message}</p>
-                            </div>
-                        )
-                    } else {
-                        return (
-                            <div key={index}>
-                            <p style={{ fontFamily: 'roboto' }}>{msg.senderName}: {msg.message}</p>
-                            </div>
-                            )
-                        }
-                    })
-                } */}
-
-
-
-
-{/* <TextField variant="outlined" focused label="Message" placeholder="Message" value={sentMessage} onChange={(event) => {
-                const newMessage = event.target.value;
-                setSentMessage(newMessage);
-            }}
-                InputProps={{
-                    style: { color: 'white' }
-                }}
-                InputLabelProps={{
-                    style: { color: 'white' }
-                }}
-            ></TextField>
-            <br></br>
-            <br></br>
-        <Button variant="contained" onClick={sendMessage}>Send 🚀</Button> */}
-
-
-{/* <h1 style={{ fontFamily: 'roboto' }}>Groups</h1>
-            {
-                groupList.map((item, index) => {
-                    if (item !== null) {
-                        if (item.members.indexOf(`${userEmailId}`) !== -1) {
-                            return (
-                                <div key={index} ref={el => groupRef.current[`${item.groupName}`] = el} onClick={() => {
-                                    setCurrentGroup(item.groupName)
-                                }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', width: 'max-content' }}>
-                                    <p style={{ fontFamily: 'roboto' }}> {item.groupName}</p>
-                                </div>
-                            )
-                        }
-                    }
-                })
-            }
-
-
-            <h1 style={{ fontFamily: 'roboto' }}> You are currently in : {currentGroup}</h1>
-
-            {
-                recieveGroupMessage.map((msg, index) => {
-                    if (msg.sender === userEmailId) {
-                        return (
-                            <div key={index}>
-                                <p style={{ fontFamily: 'roboto' }}>You: {msg.message}</p>
-                            </div>
-                        )
-                    } else {
-                        return (
-                            <div key={index}>
-                                <p style={{ fontFamily: 'roboto' }}>{msg.senderName}: {msg.message}</p>
-                            </div>
-                        )
-                    }
-                })
-            }
-
-
-            <TextField variant="outlined" focused label="Message" placeholder="Message" value={sentGroupMessage} onChange={(event) => {
-                const newGroupMessage = event.target.value;
-                setSentGroupMessage(newGroupMessage);
-            }}
-                InputProps={{
-                    style: { color: 'white' }
-                }}
-                InputLabelProps={{
-                    style: { color: 'white' }
-                }}
-            ></TextField>
-            <br></br>
-            <br></br>
-            <Button variant="contained" onClick={sendGroupMessage}>Send 🚀</Button> */}
