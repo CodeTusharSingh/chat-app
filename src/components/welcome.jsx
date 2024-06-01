@@ -18,6 +18,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 function Welcome() {
+
     const [userEmailId, setUserEmailId] = useState('');
     const [userName, setUserName] = useState('');
     const [userPhotoURL, setUserPhotURL] = useState('');
@@ -167,6 +168,7 @@ function Welcome() {
         if (sentMessage != '' && currentRoom != '') {
             addDoc(collection(doc(db, 'chatRoom', `${currentRoom}`), 'messages'), {
                 message: sentMessage,
+                // message: encryptData(sentMessage, secretKey),
                 time: new Date(),
                 sentTime: formatDate(new Date()),
                 sender: userEmailId,
@@ -223,8 +225,10 @@ function Welcome() {
                     if (change.type === 'modified') {
                         console.log('Document modified:', change.doc.data().roomName);
                         if (change.doc.data().roomName && currentRoom !== change.doc.data().roomName) {
-                            if (roomRef.current && roomRef.current[`${change.doc.data().roomName}`])
-                                roomRef.current[`${change.doc.data().roomName}`].style.color = 'green';
+                            if (roomRef.current && roomRef.current[`${change.doc.data().roomName}`]) {
+                                roomRef.current[`${change.doc.data().roomName}`].style.color = '#00ff44';
+                                roomRef.current[`${change.doc.data().roomName}`].style.fontWeight = '500';
+                            }
                         }
                     }
                 });
@@ -406,8 +410,10 @@ function Welcome() {
                     if (change.type === 'modified') {
                         console.log('Document modified:', change.doc.data().groupName);
                         if (change.doc.data().groupName !== undefined && currentGroup !== change.doc.data().groupName) {
-                            if (groupRef.current && groupRef.current[`${change.doc.data().groupName}`])
-                                groupRef.current[`${change.doc.data().groupName}`].style.color = 'green';
+                            if (groupRef.current && groupRef.current[`${change.doc.data().groupName}`]) {
+                                groupRef.current[`${change.doc.data().groupName}`].style.color = '#00ff44';
+                                groupRef.current[`${change.doc.data().groupName}`].style.fontWeight = '500';
+                            }
                         }
                     }
                 });
@@ -502,6 +508,52 @@ function Welcome() {
     }, [width, chooseChatRoom]);
 
 
+    const [profile, setProfile] = useState([]);
+    const [showProfile, setShowProfile] = useState(false);
+
+    const userProfile = () => {
+        const documentRef = doc(db, `chatAppUserData/${userEmailId}`);
+        getDoc(documentRef)
+            .then((documentSnapshot) => {
+                const data = [documentSnapshot.data()];
+                setProfile(data);
+                setShowProfile(true);
+            }).catch((error) => {
+                console.error("Error retriving user data: ", error);
+            })
+    }
+
+    const [roomInfo, setRoomInfo] = useState([]);
+    const [showRoomInfo, setShowRoomInfo] = useState(false);
+
+    const roomInformation = (event) => {
+        const documentRef = doc(db, `chatRoom/${event}`);
+        getDoc(documentRef)
+            .then((documentSnapshot) => {
+                const data = [documentSnapshot.data()];
+                setRoomInfo(data);
+                console.log(roomInfo);
+                setShowRoomInfo(true);
+            }).catch((error) => {
+                console.error("Error retriving user data: ", error);
+            })
+    }
+
+    const [groupInfo, setGroupInfo] = useState([]);
+    const [showGroupInfo, setShowGroupInfo] = useState(false);
+
+    const groupInformation = (event) => {
+        const documentRef = doc(db, `chatRoom/${event}`);
+        getDoc(documentRef)
+            .then((documentSnapshot) => {
+                setGroupInfo(documentSnapshot.data().members);
+                console.log(groupInfo);
+                setShowGroupInfo(true);
+            }).catch((error) => {
+                console.error("Error retriving user data: ", error);
+            })
+    }
+
     return (
         <>
             {!userPhotoURL &&
@@ -528,14 +580,12 @@ function Welcome() {
                             onMouseLeave={() => { setShowProfileMenu(false) }}>
                             <img src={userPhotoURL} alt={userName} title={userName}
                                 style={{ borderRadius: '50%', height: '60px', width: '60px' }}></img>
-
                             {showProfileMenu &&
                                 <div id='main-page-profile-menu' >
-                                    <div id='user-profile' style={{ fontFamily: 'roboto' }}>Profile</div>
+                                    <div id='user-profile' style={{ fontFamily: 'roboto' }} onClick={userProfile}>Profile</div>
                                     <div id='user-sign-out' style={{ fontFamily: 'roboto' }} onClick={() => { setSignOut(true) }}>Sign Out</div>
                                 </div>
                             }
-
                         </div>
                     </div>
                     <div id='mobile-create-room-group-button'>
@@ -968,7 +1018,7 @@ function Welcome() {
                                                                 }
                                                             }}
                                                             style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
-                                                            <img src={item.photo2} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }}></img>
+                                                            <img src={item.photo2} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }} onClick={() => { roomInformation(item.roomName) }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.roomName}</p>
                                                         </div>
                                                     )
@@ -1000,7 +1050,7 @@ function Welcome() {
                                                                 }
                                                             }}
                                                             style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
-                                                            <img src={item.photo1} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }}></img>
+                                                            <img src={item.photo1} alt="Room Photo" style={{ borderRadius: '50%', height: '70px', width: '70px' }} onClick={() => { roomInformation(item.roomName) }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.roomName}</p>
                                                         </div>)
                                                 }
@@ -1025,7 +1075,7 @@ function Welcome() {
                                                             setCurrentRoom('');
                                                         }
                                                     }}></ArrowBackIcon>
-                                                    <img src={currentRoomPhoto} alt="Room Photo" style={{ borderRadius: '50%', height: '50px', width: '50px' }}></img>
+                                                    <img src={currentRoomPhoto} onClick={() => { roomInformation(currentRoom) }} alt="Room Photo" style={{ borderRadius: '50%', height: '50px', width: '50px', cursor: 'pointer' }}></img>
                                                 </div>
                                                 <p style={{ fontFamily: 'roboto', fontSize: '18px' }}> {currentRoom}</p>
                                             </div>
@@ -1039,7 +1089,7 @@ function Welcome() {
                                                                     <div key={index}>
                                                                         <p style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'roboto', fontSize: '10px', color: 'white' }}>You</p>
                                                                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                                            <div id="chat-room-msg-area-sender" ref={messageAreaRef} >
+                                                                            <div id="chat-room-msg-area-sender" ref={messageAreaRef}>
                                                                                 <p style={{ fontFamily: 'roboto', wordWrap: 'break-word' }}>{msg.message}</p>
                                                                             </div>
                                                                         </div>
@@ -1126,7 +1176,7 @@ function Welcome() {
                                                                 }
                                                             }}
                                                             style={{ backgroundColor: 'black', color: 'white', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between', paddingLeft: '30px', paddingRight: '30px', borderBottom: '1px solid white', height: '100px' }}>
-                                                            <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
+                                                            <img onClick={() => { groupInformation(item.groupName) }} src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '80px', width: '80px' }}></img>
                                                             <p style={{ fontFamily: 'roboto', fontSize: '20px' }}> {item.groupName}</p>
                                                         </div>
                                                     )
@@ -1152,7 +1202,7 @@ function Welcome() {
                                                             setCurrentGroup('');
                                                         }
                                                     }}></ArrowBackIcon>
-                                                    <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '60px', width: '60px' }}></img>
+                                                    <img onClick={() => { groupInformation(currentGroup) }} src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '60px', width: '60px', cursor: 'pointer' }}></img>
                                                 </div>
                                                 <p style={{ fontFamily: 'roboto', fontSize: '18px' }}> {currentGroup}</p>
                                             </div>
@@ -1224,6 +1274,61 @@ function Welcome() {
                     </div>
                 </>
             }
+
+            {showProfile &&
+                <div id="user-profile-info">
+                    {profile.length > 0 &&
+                        <>
+                            {profile.map((item, index) => (
+                                <div style={{ color: 'white', width: 'fit-content', fontFamily: 'roboto', display: 'flex', flexDirection: 'column', alignItems: 'center' }} key={index}>
+                                    <h2>{item.name}</h2>
+                                    <img src={item.photoURL} title={userName} alt="Photo" style={{ borderRadius: '50%', height: '150px', width: '150px' }}></img>
+                                    <h3>{item.email}</h3>
+                                </div>
+                            ))}
+                        </>
+                    }
+                    <button onClick={() => { setShowProfile(false) }} >close</button>
+                </div>
+            }
+
+            {showRoomInfo &&
+                <div id="room-info">
+                    {roomInfo.length > 0 &&
+                        <>
+                            {roomInfo.map((item, index) => (
+                                <div style={{ color: 'white', width: 'fit-content', fontFamily: 'roboto', display: 'flex', flexDirection: 'column', alignItems: 'center' }} key={index}>
+                                    <h2>{item.roomName}</h2>
+                                    <img src={item.photo1} title={item.member1} alt="Photo" style={{ borderRadius: '50%', height: '100px', width: '100px' }}></img>
+                                    <h3>{item.member1}</h3>
+                                    <img src={item.photo2} title={item.member2} alt="Photo" style={{ borderRadius: '50%', height: '100px', width: '100px' }}></img>
+                                    <h3>{item.member2}</h3>
+                                </div>
+                            ))}
+                        </>
+                    }
+                    <button onClick={() => { setShowRoomInfo(false) }} >close</button>
+                </div>
+            }
+
+            {showGroupInfo &&
+                <div id="group-info">
+                    <h2 style={{ color: 'white', fontFamily: 'roboto' }}>{currentGroup}</h2>
+                    <img src='https://icons.veryicon.com/png/o/miscellaneous/admin-dashboard-flat-multicolor/user-groups.png' alt="Group Photo" style={{ borderRadius: '50%', height: '100px', width: '100px' }}></img>
+
+                    {groupInfo.length > 0 &&
+                        <>
+                            <div style={{ color: 'white', width: '90%', fontFamily: 'roboto', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center' }} >
+                                {groupInfo.map((item, index) => (
+                                    <h3 key={index}>{item}</h3>
+                                ))}
+                            </div>
+                        </>
+                    }
+                    <button onClick={() => { setShowGroupInfo(false) }} >close</button>
+                </div>
+            }
+
 
             {signOut && <SignOut />}
         </>
